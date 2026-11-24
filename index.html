@@ -790,74 +790,51 @@ html.introon #wa,body.menu #wa{opacity:0;pointer-events:none;transform:scale(.8)
 #wa:hover{opacity:1;max-width:180px;gap:8px;background:rgba(13,27,44,.8);border-color:#7fd6a2}
 #wa::after{display:none}
 @media (max-width:860px){#wa{height:40px;max-width:40px;padding:0 10px}}
+
+/* abertura em movimento */
+#inicio .hv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;opacity:0;transition:opacity 1.6s ease}
+#inicio .hv.on{opacity:1}
+#inicio .bg img{position:relative}
+#inicio .veil{z-index:2}
+/* filmes */
+#filme{height:auto!important;min-height:0;overflow:visible;background:var(--deep);padding:clamp(90px,10vw,150px) 0 clamp(110px,12vw,170px)}
+#filme .fhd{position:static;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:clamp(30px,4vw,50px)}
+#filme .fhd .lead{color:var(--sand);max-width:480px;justify-self:end}
+.fc{position:relative;overflow:hidden;border-radius:14px;user-select:none;touch-action:pan-y}
+.ftrack{display:flex;transition:transform .8s var(--ease)}
+.ftrack.drag{transition:none}
+.fs{flex:0 0 100%;margin:0;position:relative}
+.fv{position:relative;aspect-ratio:16/9;background:#050a10;overflow:hidden}
+.fv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#050a10}
+.fv:fullscreen video{object-fit:contain}
+.fplay{position:absolute;left:50%;top:50%;width:clamp(64px,7vw,92px);height:clamp(64px,7vw,92px);margin:calc(clamp(64px,7vw,92px)/-2) 0 0 calc(clamp(64px,7vw,92px)/-2);border-radius:50%;display:grid;place-items:center;background:rgba(242,238,227,.16);border:1px solid rgba(242,238,227,.6);color:var(--ivory);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .4s var(--ease),opacity .4s,background .3s}
+.fplay svg{width:34%;height:34%;margin-left:6%}
+.fplay:hover{transform:scale(1.06);background:rgba(242,238,227,.28)}
+.fs.playing .fplay{opacity:0;pointer-events:none}
+.fs figcaption{position:absolute;left:0;right:0;bottom:0;padding:clamp(18px,2.4vw,30px);background:linear-gradient(0deg,rgba(5,10,16,.75),transparent);display:flex;flex-direction:column;gap:4px;pointer-events:none;transition:opacity .5s}
+.fs figcaption b{font-weight:400;font-size:clamp(17px,1.5vw,22px)}
+.fs figcaption span{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--sand)}
+.fs.playing figcaption{opacity:0}
+.fs.soon .fplay{display:none}
+.fs.soon .fv::after{content:"Em breve";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--sand);padding:10px 16px;border:1px solid rgba(var(--sand-rgb),.4);border-radius:999px;background:rgba(5,10,16,.4)}
+.fctl{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 4px 0}
+.fdots{display:flex;gap:8px}
+.fdots button{width:28px;height:3px;border-radius:2px;background:rgba(var(--sand-rgb),.3);transition:background .3s,width .4s var(--ease)}
+.fdots button.on{background:var(--sand);width:44px}
+.fbtns{display:flex;gap:8px;align-items:center}
+.fb{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(var(--sand-rgb),.3);color:var(--ivory);transition:border-color .3s,background .3s}
+.fb:hover{border-color:var(--sand);background:rgba(var(--sand-rgb),.1)}
+.fb svg{width:17px;height:17px}
+.fsep{width:1px;height:22px;background:rgba(var(--sand-rgb),.2);margin:0 4px}
+.fprog{position:absolute;left:0;right:0;top:0;height:2px;z-index:3;pointer-events:none}
+.fprog i{display:block;height:100%;width:0;background:var(--sand)}
+#filme .vrow{margin-top:24px}
+@media (max-width:860px){#filme .fhd{grid-template-columns:1fr;gap:14px}#filme .fhd .lead{justify-self:start}.fb{width:38px;height:38px}}
 </style>
 </head>
 <body>
 
-<div id="intro" aria-label="Abertura do Ribeiras">
-  <div class="il" id="il"><img src="img/logo-sand.png" alt="Ribeiras Torres RS"><i></i><p>Às margens do Mampituba</p></div>
-  <video id="iv1" class="iv" playsinline preload="auto" src="video/abertura-1.mp4"></video>
-  <video id="iv2" class="iv" playsinline preload="none" src="video/abertura-2.mp4"></video>
-  <div class="ishade"></div>
-  <button type="button" class="isnd" id="isnd" aria-label="Ativar som"><span class="eq"><i></i><i></i><i></i><i></i></span><b>Som</b></button>
-  <button type="button" class="iskip" id="iskip"><span>Pular introdução</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
-  <div class="ibar"><i id="ibar"></i></div>
 </div>
-<script>
-/* abertura: logo, vídeo em duas partes contínuas, pular introdução */
-(function(){'use strict';
-const q=s=>document.querySelector(s);const I=q('#intro');if(!I)return;
-const A=q('#iv1'),B=q('#iv2'),SK=q('#iskip'),SN=q('#isnd'),BAR=q('#ibar');
-const ONE=!!window.__RIB_ONEVIDEO;const DA=53.53;let DT=108.5;let cur=A,done=false,started=false;
-if(ONE){B.remove();A.addEventListener('loadedmetadata',()=>{if(A.duration)DT=A.duration;});}
-document.documentElement.classList.add('introon');
-const finish=()=>{if(done)return;done=true;
-  const H=document.querySelectorAll('#inicio .mask,#inicio .rv');H.forEach(m=>m.classList.remove('in'));
-  document.body.classList.add('revealing');
-  /* 1) o vídeo se dissolve no azul e a logo volta por um instante */
-  I.classList.remove('s2');I.classList.add('end');
-  [A,B].forEach(v=>{const v0=v.volume;let k=0;const f=setInterval(()=>{k++;try{v.volume=Math.max(0,v0*(1-k/16));}catch(e){}if(k>=16){clearInterval(f);try{v.pause();}catch(e){}}},100);});
-  /* 2) a abertura se abre devagar e a foto aparece */
-  setTimeout(()=>{document.documentElement.classList.remove('introon');I.classList.add('out');
-    requestAnimationFrame(()=>{document.body.classList.remove('revealing');document.body.classList.add('revealed');});},1900);
-  /* 3) o texto entra em seguida */
-  setTimeout(()=>H.forEach(m=>m.classList.add('in')),3300);
-  setTimeout(()=>{A.removeAttribute('src');B.removeAttribute('src');A.load();B.load();},4600);};
-window.__ribIntroReplay=()=>{location.reload();};
-SK.onclick=finish;
-addEventListener('keydown',e=>{if(!done&&(e.key==='Escape'||e.key==='Enter'))finish();});
-const setSnd=m=>{A.muted=B.muted=m;SN.classList.toggle('on',!m);SN.setAttribute('aria-label',m?'Ativar som':'Silenciar');};
-SN.onclick=e=>{e.stopPropagation();setSnd(!A.muted);};
-/* se o navegador bloquear o som, ele liga no primeiro toque/clique/tecla */
-const unlock=e=>{if(done||e.target.closest&&e.target.closest('#iskip,#isnd'))return;if(A.muted){setSnd(false);(cur.paused?cur.play():Promise.resolve()).catch(()=>{});}off();};
-const off=()=>['pointerdown','keydown','touchstart'].forEach(k=>removeEventListener(k,unlock,true));
-['pointerdown','keydown','touchstart'].forEach(k=>addEventListener(k,unlock,true));
-const prog=()=>{const t=cur===A?A.currentTime:DA+B.currentTime;if(ONE&&A.duration)DT=A.duration;BAR.style.width=Math.min(100,t/DT*100)+'%';if(!done)requestAnimationFrame(prog);};
-A.addEventListener('timeupdate',()=>{if(ONE)return;if(A.duration&&A.duration-A.currentTime<20&&B.preload!=='auto'){B.preload='auto';B.load();}});
-A.addEventListener('ended',()=>{if(done)return;if(ONE){finish();return;}B.classList.add('cut','on');cur=B;const p=B.play();if(p&&p.catch)p.catch(()=>{});setTimeout(()=>{A.classList.remove('on');},60);});
-B.addEventListener('ended',finish);
-const fail=()=>{if(!started)setTimeout(finish,1500);else if(cur===B)finish();};
-A.addEventListener('error',fail);B.addEventListener('error',()=>{if(cur===B)finish();});
-const startVideo=()=>{if(done||started)return;started=true;I.classList.add('s2');
-  A.muted=B.muted=false;const p=A.play();A.classList.add('on');setSnd(false);
-  if(p&&p.catch)p.catch(()=>{setSnd(true);A.play().catch(()=>finish());});
-  I.classList.add('s3');requestAnimationFrame(prog);};
-/* o vídeo sempre começa com som: se o navegador não deixar tocar sozinho com som,
-   a logo mostra "Iniciar experiência" e o toque da pessoa libera o som */
-let gated=false;
-const tryAuto=()=>startVideo();
-/* 1º momento: logo; depois, o vídeo assume */
-requestAnimationFrame(()=>requestAnimationFrame(()=>I.classList.add('s1')));
-let ready=false,minT=false;const go=()=>{if((ready||A.readyState>=2)&&minT)tryAuto();};
-A.addEventListener('loadeddata',()=>{ready=true;go();},{once:true});
-A.addEventListener('canplay',()=>{ready=true;go();},{once:true});
-setTimeout(()=>{minT=true;go();},2800);
-setTimeout(()=>I.classList.add('s3'),1400);
-if(!A.canPlayType('video/mp4'))A.dispatchEvent(new Event('error'));
-setTimeout(()=>{if(!started){ready=true;go();}},9000);
-setTimeout(()=>{if(!started&&!gated&&A.readyState<2)finish();},14000);
-})();
-</script>
 <div id="pre"><div class="w"><img src="img/logo-sand.png" alt="Ribeiras"><div class="ln"><i id="preb"></i></div><p>Às margens do Mampituba</p></div></div>
 <div id="prog"></div>
 
@@ -875,7 +852,7 @@ setTimeout(()=>{if(!started&&!gated&&A.readyState<2)finish();},14000);
 <main>
 <!-- 01 · INÍCIO -->
 <section id="inicio" data-ch="Início" data-img="img/hero-ribeiras.jpg">
-  <div class="bg" id="hbg"><img src="img/hero-ribeiras.jpg" alt="Vista aérea do Ribeiras ao entardecer, com o Rio Mampituba e Torres ao fundo" fetchpriority="high"></div>
+  <div class="bg" id="hbg"><video class="hv" id="hv" muted autoplay loop playsinline preload="auto" poster="img/hero-ribeiras.jpg" aria-hidden="true"><source src="video/hero.mp4" type="video/mp4"></video><img src="img/hero-ribeiras.jpg" alt="Vista aérea do Ribeiras ao entardecer, com o Rio Mampituba e Torres ao fundo" fetchpriority="high"></div>
   <div class="veil"></div><div class="dim" id="hdim"></div>
   <div class="coord">29°18′ S · 49°44′ O<br>Rio Mampituba · Torres RS</div>
   <div class="ct" id="hct">
@@ -902,15 +879,36 @@ setTimeout(()=>{if(!started&&!gated&&A.readyState<2)finish();},14000);
 </section>
 
 <!-- 03 · FILME -->
-<section id="filme" data-clip data-ch="O filme" data-img="img/voo-intro.webp">
-  <img class="poster" src="img/voo-intro.webp" alt="" loading="lazy">
-  <video id="fv" muted playsinline loop preload="none" aria-label="Filme do Ribeiras"><source src="video/filme.mp4" type="video/mp4"></video>
-  <div class="sh"></div>
-  <div class="ct">
-    <div class="rv"><div class="eb l">O filme</div><h2 class="h2" style="margin-top:16px">Chegue pelo rio.</h2></div>
-    
+<section id="filme" data-ch="Os filmes" data-img="img/voo-intro.webp">
+  <div class="wrap">
+    <div class="ct fhd"><div class="rv"><div class="eb l">Os filmes</div><h2 class="h2" style="margin-top:16px">Chegue pelo rio.</h2></div><p class="lead rv d1x">Dois olhares sobre o Ribeiras. Deslize para o lado, aperte o play e, se quiser, abra em tela cheia.</p></div>
+    <div class="fc rv d1x" id="fc">
+      <div class="ftrack" id="ftrack">
+        <figure class="fs" data-i="0">
+          <div class="fv"><video playsinline preload="none" poster="img/filme-1.jpg"><source src="video/filme-1.mp4" type="video/mp4"></video>
+            <button class="fplay" type="button" aria-label="Assistir"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></button></div>
+          <figcaption><b>Às margens do Mampituba</b><span>Filme de lançamento · 1 min 48 s</span></figcaption>
+        </figure>
+        <figure class="fs" data-i="1">
+          <div class="fv"><video playsinline preload="none" poster="img/filme-2.jpg"><source src="video/filme-2.mp4" type="video/mp4"></video>
+            <button class="fplay" type="button" aria-label="Assistir"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></button></div>
+          <figcaption><b>Junto à costa, o lugar como ele é</b><span>Imagens reais da região · 1 min 15 s</span></figcaption>
+        </figure>
+      </div>
+      <div class="fctl">
+        <div class="fdots" id="fdots"><button type="button" class="on" aria-label="Filme 1"></button><button type="button" aria-label="Filme 2"></button></div>
+        <div class="fbtns">
+          <button type="button" class="fb" id="fpp" aria-label="Reproduzir"><svg viewBox="0 0 24 24" fill="currentColor"><path id="fppi" d="M8 5.5v13l11-6.5z"/></svg></button>
+          <button type="button" class="fb" id="fmute" aria-label="Silenciar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path id="fmw" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path id="fmx" d="M16 9l6 6M22 9l-6 6" style="display:none"/></svg></button>
+          <button type="button" class="fb" id="ffs" aria-label="Tela cheia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+          <span class="fsep"></span>
+          <button type="button" class="fb" id="fprev" aria-label="Filme anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <button type="button" class="fb" id="fnext" aria-label="Próximo filme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+      <div class="fprog"><i id="fprog"></i></div>
+    </div>
   </div>
-  <div class="bar" id="fbar"></div>
 </section>
 
 <!-- 04 · O PROJETO -->
@@ -1294,11 +1292,30 @@ addEventListener('resize',()=>{measure();fitMap();onScroll();});
   let fr=0;const draw=()=>{if(vis&&(fr++&1)){g.clearRect(0,0,w,h);for(let L=0;L<10;L++){g.beginPath();const y0=h*(.14+L*.08),a=10+L*1.4;for(let x=0;x<=w;x+=14){const y=y0+Math.sin(x*.004+t*.6+L*.5)*a+Math.sin(x*.011-t*.4+L)*a*.35;x?g.lineTo(x,y):g.moveTo(x,y);}g.strokeStyle='rgba(218,214,197,'+(.03+L*.004)+')';g.lineWidth=1;g.stroke();}t+=reduce?0:.012;}requestAnimationFrame(draw);};draw();})();
 
 /* ---------- filme ---------- */
-(function(){const v=$('#fv'),s=$('#filme');let user=false,paused=false;
-  let tm=null;new IntersectionObserver(es=>{const e=es[0];clearTimeout(tm);if(e.isIntersecting&&e.intersectionRatio>.45){tm=setTimeout(()=>{if(!paused){v.preload='auto';const p=v.play();if(p&&p.catch)p.catch(()=>{});}mark('pts','Filme');},350);}else{v.pause();}},{threshold:[0,.45,.8]}).observe(s);
-  v.addEventListener('playing',()=>s.classList.add('playing'));
-  v.addEventListener('timeupdate',()=>{if(v.duration)$('#fbar').style.width=(v.currentTime/v.duration*100)+'%';});
-  })();
+/* filmes: carrossel com 2 vídeos, deslize, som, tela cheia */
+(function(){const tr=$('#ftrack'),S=$$('#ftrack .fs'),V=S.map(s=>s.querySelector('video'));let k=0;
+  const ico=()=>{const v=V[k];$('#fppi').setAttribute('d',v.paused?'M8 5.5v13l11-6.5z':'M7 5h3.5v14H7zM13.5 5H17v14h-3.5z');$('#fpp').setAttribute('aria-label',v.paused?'Reproduzir':'Pausar');
+    $('#fmw').style.display=v.muted?'none':'';$('#fmx').style.display=v.muted?'':'none';$('#fmute').setAttribute('aria-label',v.muted?'Ativar som':'Silenciar');S.forEach((s,i)=>s.classList.toggle('playing',!V[i].paused));};
+  const go=i=>{V.forEach(v=>v.pause());k=(i+S.length)%S.length;tr.style.transform='translateX('+(-100*k)+'%)';S.forEach((s,j)=>s.classList.toggle('on',j===k));$$('#fdots button').forEach((d,j)=>d.classList.toggle('on',j===k));$('#fprog').style.width='0';ico();};
+  const play=()=>{const v=V[k];v.preload='auto';const p=v.play();if(p&&p.catch)p.catch(()=>{});mark('pts','Filme '+(k+1));};
+  S.forEach((s,i)=>{s.querySelector('.fplay').onclick=()=>{if(i!==k)go(i);play();};V[i].addEventListener('click',()=>{V[i].paused?play():V[i].pause();});
+    ['play','pause','volumechange','ended'].forEach(e=>V[i].addEventListener(e,ico));V[i].addEventListener('timeupdate',()=>{if(i===k&&V[i].duration)$('#fprog').style.width=(V[i].currentTime/V[i].duration*100)+'%';});
+    V[i].addEventListener('error',()=>s.classList.add('soon'),true);s.querySelector('source').addEventListener('error',()=>s.classList.add('soon'));});
+  $('#fpp').onclick=()=>V[k].paused?play():V[k].pause();
+  $('#fmute').onclick=()=>{const m=!V[k].muted;V.forEach(v=>v.muted=m);ico();};
+  $('#ffs').onclick=()=>{const v=V[k],el=v.closest('.fv');play();try{if(v.webkitEnterFullscreen&&!document.fullscreenEnabled)v.webkitEnterFullscreen();else (el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}};
+  $('#fprev').onclick=()=>go(k-1);$('#fnext').onclick=()=>go(k+1);
+  $$('#fdots button').forEach((d,j)=>d.onclick=()=>go(j));
+  let x0=null,dx=0;const fc=$('#fc');
+  fc.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;x0=e.clientX;dx=0;tr.classList.add('drag');});
+  fc.addEventListener('pointermove',e=>{if(x0===null)return;dx=e.clientX-x0;tr.style.transform='translateX(calc('+(-100*k)+'% + '+dx+'px))';});
+  const up=()=>{if(x0===null)return;x0=null;tr.classList.remove('drag');if(Math.abs(dx)>60)go(k+(dx<0?1:-1));else go(k);};
+  fc.addEventListener('pointerup',up);fc.addEventListener('pointercancel',up);fc.addEventListener('pointerleave',up);
+  new IntersectionObserver(es=>{if(!es[0].isIntersecting)V.forEach(v=>v.pause());},{threshold:.15}).observe(fc);
+  go(0);
+  /* abertura em movimento: o vídeo entra por cima da foto quando começa a tocar */
+  const hv=$('#hv');if(hv){hv.addEventListener('playing',()=>hv.classList.add('on'));const p=hv.play();if(p&&p.catch)p.catch(()=>{});}
+})();
 
 /* ---------- dados dos clubes ---------- */
 const ICON={portico:'<path d="M4 20V8h16v12M2 8h20M8 20v-7h8v7"/>',beach:'<circle cx="9" cy="9" r="5.5"/><path d="M13 13l7 7M6.5 6.5l5 5M11.5 6.5l-5 5"/>',social:'<circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.5"/><path d="M3 19c0-3 2.2-5 5-5s5 2 5 5M13 18.5c.3-2.3 1.7-3.8 3.5-3.8S20 16 20.5 18.5"/>',esportivo:'<path d="M3 12h18M6 8v8M3 10v4M18 8v8M21 10v4"/>',pesca:'<path d="M3 12c3-4 9-5 13-2l4-3v10l-4-3c-4 3-10 2-13-2z"/><circle cx="8" cy="11" r=".8" fill="currentColor"/>',lotes:'<path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h13V9.5M10 20v-5h4v5"/>'};
@@ -1501,7 +1518,7 @@ $('#cf').addEventListener('submit',e=>{e.preventDefault();const err=$('#ferr');e
   const mk=()=>{const a=document.createElement('a');a.className='vcta';a.href='#cadastro';a.innerHTML='Agende sua visita'+A;return a;};
   const row=(after,center)=>{if(!after)return;const d=document.createElement('div');d.className='vrow rv in'+(center?' c':'');d.appendChild(mk());after.insertAdjacentElement('afterend',d);};
   row($('#msig'),true);
-  $('#filme .ct>div').appendChild(Object.assign(document.createElement('div'),{className:'vrow'})).appendChild(mk());
+  row($('#fc'));
   row($('#comp'));
   const mb=$('#masterplan .mpbar');if(mb){const a=mk();mb.insertBefore(a,mb.querySelector('#tourb'));mb.style.gap='10px';}
   $$('#clubes .ch .ga').forEach(g=>g.appendChild(mk()));
